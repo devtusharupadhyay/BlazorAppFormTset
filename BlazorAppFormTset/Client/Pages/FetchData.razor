@@ -6,7 +6,6 @@
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from the server.</p>
-
 @if (forecasts == null)
 {
     <p><em>Loading...</em></p>
@@ -43,8 +42,16 @@ else
     {
         var token = await JSRuntime.InvokeAsync<string>("getCookie", "XSRF-TOKEN");
 
-        Http.DefaultRequestHeaders.Add("X-CSRF-TOKEN", token);
-        forecasts = await Http.PostJsonAsync<WeatherForecast[]>("WeatherForecast", null);
+        //FORM
+        HttpContent httpcontent = new StringContent($"X-CSRF-TOKEN-FORM={token}", System.Text.Encoding.UTF8);
+        httpcontent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+
+        using HttpResponseMessage responseMessage = await Http.PostAsync("WeatherForecast", httpcontent);
+        forecasts = await JsonSerializer.DeserializeAsync<WeatherForecast[]>(await responseMessage.Content.ReadAsStreamAsync());
+
+        //HEADER
+        //Http.DefaultRequestHeaders.Add("X-CSRF-TOKEN-HEADER", token);
+        //forecasts = await Http.PostJsonAsync<WeatherForecast[]>("WeatherForecast", httpcontent);
     }
 
 }

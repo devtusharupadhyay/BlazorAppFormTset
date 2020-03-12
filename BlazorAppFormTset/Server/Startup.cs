@@ -15,7 +15,7 @@ namespace BlazorAppFormTset.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
+            services.AddAntiforgery(options =>{ options.HeaderName = "X-CSRF-TOKEN-HEADER"; options.FormFieldName = "X-CSRF-TOKEN-FORM"; });
             services.AddMvc();
             services.AddResponseCompression(opts =>
             {
